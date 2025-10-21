@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HelpDesk DPES — Prototipo</title>
+
+<!-- Roboto desde Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --verde:#006341;
+    --blanco:#ffffff;
+    --gris:#F5F5F5;
+    --texto:#222222;
+    --radio:10px;
+    --max-w:1100px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: "Roboto", system-ui, Arial, sans-serif;
+    background:var(--gris);
+    color:var(--texto);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* Layout */
+  .container{
+    max-width:var(--max-w);
+    margin:28px auto;
+    background:var(--blanco);
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 6px 20px rgba(0,0,0,0.08);
+  }
+
+  header.appbar{
+    background:var(--verde);
+    color:var(--blanco);
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  header .brand{
+    font-weight:700;
+    font-size:20px;
+  }
+  header .spacer{flex:1}
+  header .nav-btn{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.12);
+    color:var(--blanco);
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;
+  }
+
+  main.content{
+    padding:28px;
+    min-height:600px;
+  }
+
+  /* Grid for desktop */
+  .layout{
+    display:flex;
+    gap:20px;
+  }
+  nav.sidenav{
+    width:260px;
+    background:#fff;
+    border-radius:8px;
+    padding:12px;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,0.03);
+    height:fit-content;
+  }
+  nav.sidenav button{
+    width:100%;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    padding:10px;
+    border-radius:8px;
+    border:0;
+    background:transparent;
+    cursor:pointer;
+    color:var(--texto);
+    font-weight:500;
+  }
+  nav.sidenav button.active{
+    background:linear-gradient(90deg, rgba(0,99,65,0.06), rgba(0,99,65,0.03));
+    border-left:4px solid var(--verde);
+    padding-left:8px;
+  }
+
+  /* Cards & form */
+  .card{
+    background:var(--blanco);
+    border-radius:10px;
+    padding:18px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.03);
+  }
+
+  .form-row{display:flex;gap:12px;margin-bottom:12px}
+  .form-row.col{flex-direction:column}
+  label{font-size:13px;margin-bottom:6px;display:block}
+  input[type="text"], input[type="password"], textarea, select{
+    width:100%;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid #e6e6e6;
+    font-size:14px;
+    background: #fff;
+  }
+  textarea{min-height:120px;resize:vertical}
+
+  .btn{
+    background:var(--verde);
+    color:var(--blanco);
+    border:0;
+    padding:10px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .btn.ghost{
+    background:transparent;
+    color:var(--verde);
+    border:1px solid var(--verde);
+  }
+  .muted{color:#666;font-size:13px}
+
+  /* Ticket list table */
+  table{width:100%;border-collapse:collapse}
+  th, td{padding:10px;text-align:left;border-bottom:1px solid #f0f0f0;font-size:14px}
+  th{font-weight:600;color:#444}
+  .chip{display:inline-block;padding:6px 10px;border-radius:999px;font-size:13px}
+  .chip.open{background:rgba(0,99,65,0.08);color:var(--verde)}
+  .chip.closed{background:rgba(0,0,0,0.06);color:#333}
+
+  /* Responsive */
+  @media (max-width:900px){
+    .container{margin:0;border-radius:0}
+    .layout{flex-direction:column}
+    nav.sidenav{width:100%;display:flex;gap:8px;overflow:auto}
+    nav.sidenav button{flex:1;white-space:nowrap}
+    header .brand{font-size:16px}
+    main.content{padding:16px}
+  }
+
+  /* Mobile header helper */
+  .mobile-only{display:none}
+  @media (max-width:600px){
+    .desktop-only{display:none}
+    .mobile-only{display:inline-block}
+  }
+
+  /* Small helpers */
+  .row{display:flex;gap:12px;align-items:center}
+  .space{height:18px}
+  .ticket-preview{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px}
+  .centered{text-align:center}
+</style>
+</head>
+<body>
+
+<div class="container" id="app">
+  <header class="appbar">
+    <button class="nav-btn mobile-only" id="menuToggle">☰</button>
+    <div class="brand">HelpDesk DPES</div>
+    <div class="spacer"></div>
+    <div class="muted desktop-only">Portal de Atención Técnica — Dirección de Prestaciones Económicas y Sociales</div>
+    <button class="nav-btn" id="btnHelp">Asistencia</button>
+  </header>
+
+  <main class="content">
+    <div class="layout">
+      <nav class="sidenav" id="sidenav">
+        <button data-view="login" class="active">🔐 Iniciar sesión</button>
+        <button data-view="register">🧾 Registrarse</button>
+        <button data-view="menu">🏠 Menú principal</button>
+        <button data-view="newticket">✉️ Levantar ticket</button>
+        <button data-view="list">📋 Listado de tickets</button>
+        <button data-view="center">💬 Centro de ayuda</button>
+      </nav>
+
+      <section style="flex:1">
+        <!-- VISTAS -->
+        <div id="view-login" class="view card">
+          <h2>Iniciar sesión</h2>
+          <p class="muted">Ingresa con tu correo institucional</p>
+          <div class="space"></div>
+          <div class="form-row col">
+            <label for="login-user">Usuario (correo)</label>
+            <input id="login-user" type="text" placeholder="usuario@dpes.gob.mx" />
+          </div>
+          <div class="form-row col">
+            <label for="login-pass">Contraseña</label>
+            <input id="login-pass" type="password" placeholder="••••••••" />
+          </div>
+          <div class="form-row" style="justify-content:flex-end">
+            <button class="btn" id="btnLogin">Entrar</button>
+          </div>
+          <p class="muted">Usuario de ejemplo: <strong>usuario@dpes.gob.mx</strong> | contraseña cualquiera</p>
+        </div>
+
+        <div id="view-register" class="view card" style="display:none">
+          <h2>Registro de usuario</h2>
+          <p class="muted">Crea una cuenta institucional</p>
+
+          <div class="form-row col">
+            <label>Nombre completo</label>
+            <input id="reg-name" type="text" placeholder="Nombre y apellidos" />
+          </div>
+          <div class="form-row">
+            <div style="flex:1">
+              <label>Correo institucional</label>
+              <input id="reg-email" type="text" placeholder="usuario@dpes.gob.mx" />
+            </div>
+            <div style="width:160px">
+              <label>Área</label>
+              <select id="reg-area">
+                <option value="Administrativo">Administrativo</option>
+                <option value="Mantenimiento">Mantenimiento</option>
+                <option value="Sistemas">Sistemas</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div style="flex:1">
+              <label>Contraseña</label>
+              <input id="reg-pass" type="password" />
+            </div>
+            <div style="flex:1">
+              <label>Confirmar contraseña</label>
+              <input id="reg-pass2" type="password" />
+            </div>
+          </div>
+          <div class="form-row" style="justify-content:space-between;align-items:center">
+            <button class="btn" id="btnRegister">Registrar</button>
+            <small class="muted">Los datos se guardan en tu navegador (demo).</small>
+          </div>
+        </div>
+
+        <div id="view-menu" class="view card" style="display:none">
+          <h2>Menú principal</h2>
+          <p class="muted">Selecciona el área para levantar un ticket</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px">
+            <div class="card ticket-preview">
+              <div>
+                <div style="font-weight:600">Soporte Técnico</div>
+                <div class="muted" style="font-size:13px">Problemas de software y cuentas</div>
+              </div>
+              <button class="btn" data-action="openTicket" data-area="Soporte Técnico">Levantar</button>
+            </div>
+
+            <div class="card ticket-preview">
+              <div>
+                <div style="font-weight:600">Mantenimiento</div>
+                <div class="muted" style="font-size:13px">Problemas de hardware y mobiliario</div>
+              </div>
+              <button class="btn" data-action="openTicket" data-area="Mantenimiento">Levantar</button>
+            </div>
+
+            <div class="card ticket-preview">
+              <div>
+                <div style="font-weight:600">Sistemas</div>
+                <div class="muted" style="font-size:13px">Integraciones y redes</div>
+              </div>
+              <button class="btn" data-action="openTicket" data-area="Sistemas">Levantar</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="view-newticket" class="view card" style="display:none">
+          <h2>Levantar ticket</h2>
+          <p class="muted">Describe la falla o requerimiento</p>
+          <div class="space"></div>
+
+          <div class="form-row">
+            <div style="flex:1">
+              <label>Área</label>
+              <select id="ticket-area">
+                <option>Soporte Técnico</option>
+                <option>Mantenimiento</option>
+                <option>Sistemas</option>
+              </select>
+            </div>
+            <div style="width:160px">
+              <label>Prioridad</label>
+              <select id="ticket-priority">
+                <option>Normal</option>
+                <option>Alta</option>
+                <option>Baja</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row col">
+            <label>Descripción</label>
+            <textarea id="ticket-desc" placeholder="Describe el problema con la mayor cantidad de detalle posible"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div style="flex:1">
+              <label>Ubicación (ej. Módulo / Oficina)</label>
+              <input id="ticket-location" type="text" placeholder="Piso 2, Oficina 203" />
+            </div>
+            <div style="width:200px">
+              <label>Teléfono / Ext.</label>
+              <input id="ticket-contact" type="text" placeholder="5512345678" />
+            </div>
+          </div>
+
+          <div class="form-row" style="justify-content:flex-end">
+            <button class="btn" id="btnCreateTicket">Enviar ticket</button>
+          </div>
+
+          <p class="muted">Al enviar, el ticket quedará disponible en el listado.</p>
+        </div>
+
+        <div id="view-list" class="view card" style="display:none">
+          <h2>Listado de tickets</h2>
+          <p class="muted">Tus solicitudes registradas</p>
+          <div class="space"></div>
+          <div id="ticketsWrapper" class="card" style="padding:0;overflow:auto;max-height:420px">
+            <table>
+              <thead>
+                <tr><th>ID</th><th>Área</th><th>Fecha</th><th>Asunto</th><th>Estado</th><th>Acción</th></tr>
+              </thead>
+              <tbody id="tblTickets">
+                <!-- llenado dinámico -->
+              </tbody>
+            </table>
+          </div>
+          <div class="space"></div>
+          <button class="btn" id="btnRefresh">Refrescar listado</button>
+        </div>
+
+        <div id="view-detail" class="view card" style="display:none">
+          <button class="btn ghost" id="btnBackToList">← Volver al listado</button>
+          <div class="space"></div>
+          <h2 id="detailTitle">Ticket #</h2>
+          <p class="muted" id="detailMeta"></p>
+          <div class="space"></div>
+          <div class="card" id="detailCard">
+            <p id="detailDesc"></p>
+            <div class="space"></div>
+            <strong>Historial</strong>
+            <div id="detailHistory" style="margin-top:8px"></div>
+          </div>
+        </div>
+
+        <div id="view-center" class="view card" style="display:none">
+          <h2>Centro de ayuda</h2>
+          <p class="muted">Contacta a un experto o revisa preguntas frecuentes</p>
+          <div class="space"></div>
+          <div class="card">
+            <strong>Asistencia rápida</strong>
+            <p class="muted">Pulsa el botón para solicitar ayuda en vivo (simulado).</p>
+            <div class="space"></div>
+            <div class="row">
+              <button class="btn" id="btnRequestHelp">Solicitar asistencia</button>
+              <button class="btn ghost" id="btnFAQ">Ver FAQ</button>
+            </div>
+            <div class="space"></div>
+            <div id="helpMessage" class="muted"></div>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+/*
+  Prototipo funcional: navegación entre vistas y manejo de tickets simple.
+  Los datos se guardan en localStorage bajo la clave 'dpes_helpdesk_demo'.
+*/
+
+const state = {
+  user: null,
+  tickets: [],
+  currentView: 'login',
+  selectedTicketId: null
+};
+
+function uid() {
+  return 'T' + Math.random().toString(36).slice(2,9).toUpperCase();
+}
+
+function saveState(){
+  localStorage.setItem('dpes_helpdesk_demo', JSON.stringify({
+    user: state.user,
+    tickets: state.tickets
+  }));
+}
+
+function loadState(){
+  const s = localStorage.getItem('dpes_helpdesk_demo');
+  if(s) {
+    try{
+      const o = JSON.parse(s);
+      state.user = o.user || null;
+      state.tickets = o.tickets || [];
+    }catch(e){}
+  } else {
+    // seed: un ticket de ejemplo
+    state.tickets = [{
+      id: uid(),
+      area: "Soporte Técnico",
+      priority: "Normal",
+      desc: "No puedo iniciar sesión en la aplicación X",
+      location: "Piso 2 - Oficina 204",
+      contact: "5512345678",
+      date: new Date().toLocaleString(),
+      status: "Abierto",
+      history: [{time:new Date().toLocaleString(), text:"Ticket creado"}]
+    }];
+    saveState();
+  }
+}
+loadState();
+
+/* Navegación */
+const views = document.querySelectorAll('.view');
+function showView(name){
+  views.forEach(v => v.style.display = v.id === 'view-'+name ? 'block' : 'none');
+  state.currentView = name;
+  // actualizar active en sidenav
+  document.querySelectorAll('nav.sidenav button').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === name);
+  });
+  // mostrar listado si corresponde
+  if(name === 'list') renderTickets();
+  if(name ==
