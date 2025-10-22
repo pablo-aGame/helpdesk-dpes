@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Detalle — HelpDesk DPES</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="header">
+  <div>
+    <div class="brand">HelpDesk DPES</div>
+    <div class="subtitle">Portal de atención técnica – Dirección de Prestaciones Económicas y Sociales</div>
+  </div>
+  <nav>
+    <a class="btn ghost" href="registro.html">Registrarse</a>
+  </nav>
+</header>
+<main class="container">
+
+<div class="card" id="detailCard">
+  <h2>Detalle del ticket</h2>
+  <p class="muted" id="detailMeta">Cargando...</p>
+  <div style="margin-top:12px" id="detailContent"></div>
+  <div style="margin-top:12px;display:flex;gap:8px"><a class="btn ghost" href="listado.html">Volver al listado</a> <a class="btn" href="menu.html">Volver al menú</a> <a class="btn ghost" href="index.html">Cerrar sesión</a></div>
+</div>
+<script>
+// Read ticket id from URL and render detail
+document.addEventListener('DOMContentLoaded', function(){
+  function getParam(name){ const url = new URL(window.location.href); return url.searchParams.get(name); }
+  const id = getParam('id') || null;
+  const arr = JSON.parse(localStorage.getItem('dpes_tickets') || '[]');
+  let t = null;
+  if(id){ t = arr.find(x=>x.id===id); }
+  if(!t && arr.length) t = arr[arr.length-1]; // fallback last ticket
+  if(!t){ document.getElementById('detailMeta').textContent='No se encontró el ticket'; return; }
+  document.getElementById('detailMeta').textContent=`${t.id} · ${t.area} · ${t.prio} · ${t.date}`;
+  document.getElementById('detailContent').innerHTML = `<div class="card"><h3>${t.desc}</h3><p class="muted">Ubicación: ${t.loc}</p><div style="margin-top:8px"><strong>Historial</strong>${t.history.map(h=>`<div style="margin-top:6px" class="muted"><strong>${h.time}</strong> · ${h.text}</div>`).join('')}</div></div>`;
+});
+</script>
+
+</main>
+
+</body>
+</html>

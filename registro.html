@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Registro — HelpDesk DPES</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="header">
+  <div>
+    <div class="brand">HelpDesk DPES</div>
+    <div class="subtitle">Portal de atención técnica – Dirección de Prestaciones Económicas y Sociales</div>
+  </div>
+  <nav>
+    <a class="btn ghost" href="registro.html">Registrarse</a>
+  </nav>
+</header>
+<main class="container">
+
+<div class="card">
+  <h2>Registro de usuario</h2>
+  <p class="muted">Crea tu cuenta institucional</p>
+  <div class="form-row">
+    <label>Nombre completo</label>
+    <input id="reg-name" type="text" placeholder="Nombre y apellidos">
+  </div>
+  <div class="form-row">
+    <label>Correo institucional</label>
+    <input id="reg-email" type="text" placeholder="usuario@dpes.gob.mx">
+  </div>
+  <div class="form-row">
+    <label>Área</label>
+    <select id="reg-area">
+      <option>Redes y Telefonía</option>
+      <option>Soporte Técnico</option>
+      <option>Seguridad Informática</option>
+      <option>Impresión</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label>Contraseña</label>
+    <input id="reg-pass" type="password">
+  </div>
+  <div style="display:flex;gap:8px">
+    <a class="btn" id="btnRegister" href="#">Registrar</a>
+    <a class="btn ghost" href="index.html">Cancelar</a>
+  </div>
+  <p class="muted" style="margin-top:8px" id="regMsg"></p>
+</div>
+<script>
+// Save registration in localStorage (simple demo)
+document.addEventListener('DOMContentLoaded', function(){
+  const btn = document.getElementById('btnRegister');
+  btn.addEventListener('click', function(e){
+    e.preventDefault();
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const area = document.getElementById('reg-area').value;
+    const pass = document.getElementById('reg-pass').value;
+    if(!name || !email || !pass){ document.getElementById('regMsg').textContent='Completa todos los campos'; return; }
+    const users = JSON.parse(localStorage.getItem('dpes_users') || '[]');
+    users.push({name,email,area,pass});
+    localStorage.setItem('dpes_users', JSON.stringify(users));
+    document.getElementById('regMsg').textContent='Registrado correctamente. Ahora puedes iniciar sesión.';
+    setTimeout(()=>{ window.location.href='index.html'; }, 900);
+  });
+});
+</script>
+
+</main>
+
+</body>
+</html>

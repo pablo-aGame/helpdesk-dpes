@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ticket — HelpDesk DPES</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="header">
+  <div>
+    <div class="brand">HelpDesk DPES</div>
+    <div class="subtitle">Portal de atención técnica – Dirección de Prestaciones Económicas y Sociales</div>
+  </div>
+  <nav>
+    <a class="btn ghost" href="registro.html">Registrarse</a>
+  </nav>
+</header>
+<main class="container">
+
+<div class="card">
+  <h2>Levantar ticket</h2>
+  <div class="form-row"><label>Área</label><select id="areaSelect"><option>Redes y Telefonía</option><option>Soporte Técnico</option><option>Seguridad Informática</option><option>Impresión</option></select></div>
+  <div class="form-row"><label>Prioridad</label><select id="prioSelect"><option>Normal</option><option>Alta</option><option>Baja</option></select></div>
+  <div class="form-row"><label>Descripción</label><textarea id="desc" placeholder="Describe el problema..."></textarea></div>
+  <div class="form-row"><label>Ubicación</label><input id="loc" type="text" placeholder="Piso, oficina o módulo"></div>
+  <div style="display:flex;gap:8px;margin-top:8px"><a class="btn" id="btnSend" href="#">Enviar (simulado)</a><a class="btn ghost" href="menu.html">Cancelar</a></div>
+  <p class="muted" style="margin-top:10px">Al enviar, el ticket aparecerá en el listado (simulado).</p>
+</div>
+<script>
+// Save ticket to localStorage and redirect to listado.html
+document.addEventListener('DOMContentLoaded', function(){
+  document.getElementById('btnSend').addEventListener('click', function(e){
+    e.preventDefault();
+    const area = document.getElementById('areaSelect').value;
+    const prio = document.getElementById('prioSelect').value;
+    const desc = document.getElementById('desc').value.trim();
+    const loc = document.getElementById('loc').value.trim();
+    if(!desc){ alert('Escribe una descripción'); return; }
+    const arr = JSON.parse(localStorage.getItem('dpes_tickets') || '[]');
+    const id = 'T'+Math.random().toString(36).slice(2,8).toUpperCase();
+    arr.push({id, area, prio, desc, loc, date:new Date().toLocaleString(), status:'Abierto', history:[{time:new Date().toLocaleString(), text:'Ticket creado'}]});
+    localStorage.setItem('dpes_tickets', JSON.stringify(arr));
+    window.location.href='listado.html';
+  });
+});
+</script>
+
+</main>
+
+</body>
+</html>

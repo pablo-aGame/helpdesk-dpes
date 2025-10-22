@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Menu — HelpDesk DPES</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="header">
+  <div>
+    <div class="brand">HelpDesk DPES</div>
+    <div class="subtitle">Portal de atención técnica – Dirección de Prestaciones Económicas y Sociales</div>
+  </div>
+  <nav>
+    <a class="btn ghost" href="registro.html">Registrarse</a>
+  </nav>
+</header>
+<main class="container">
+
+<div class="card">
+  <h2>Menú principal</h2>
+  <p class="muted">Selecciona el área para levantar un ticket o revisa tus solicitudes</p>
+  <div style="margin-top:14px">
+    <div class="ticket"><div><div style="font-weight:700">Redes y Telefonía</div><div class="muted">Problemas de conectividad, voz o datos</div></div><a class="btn" href="ticket.html">Levantar</a></div>
+    <div class="ticket"><div><div style="font-weight:700">Soporte Técnico</div><div class="muted">Problemas de software y configuración</div></div><a class="btn" href="ticket.html">Levantar</a></div>
+    <div class="ticket"><div><div style="font-weight:700">Seguridad Informática</div><div class="muted">Cuentas, accesos y protección de datos</div></div><a class="btn" href="ticket.html">Levantar</a></div>
+    <div class="ticket"><div><div style="font-weight:700">Impresión</div><div class="muted">Fallas de impresoras y escáneres</div></div><a class="btn" href="ticket.html">Levantar</a></div>
+  </div>
+  <div style="margin-top:16px">
+    <a class="btn" href="listado.html">Ver tickets</a>
+    <a class="btn ghost" href="index.html">Cerrar sesión</a>
+  </div>
+</div>
+
+<div class="card" style="margin-top:14px">
+  <h3>Feedback / Retroalimentación</h3>
+  <p class="muted">Envíanos comentarios sobre el portal (simulado)</p>
+  <div class="form-row">
+    <label>Tu comentario</label>
+    <textarea id="feedbackText" placeholder="Escribe tu comentario..."></textarea>
+  </div>
+  <div style="display:flex;gap:8px">
+    <a class="btn" id="btnFeedback" href="#">Enviar feedback</a>
+    <a class="btn ghost" href="ayuda.html">Ver ayuda</a>
+  </div>
+  <div id="feedbackMsg" class="muted" style="margin-top:8px"></div>
+  <div class="feedback-list" id="feedbackList"></div>
+</div>
+<script>
+// Simple feedback handling: save into localStorage and display
+document.addEventListener('DOMContentLoaded', function(){
+  const fbBtn = document.getElementById('btnFeedback');
+  const fbText = document.getElementById('feedbackText');
+  const fbMsg = document.getElementById('feedbackMsg');
+  const fbList = document.getElementById('feedbackList');
+  function renderList(){
+    const arr = JSON.parse(localStorage.getItem('dpes_feedback') || '[]');
+    if(!arr.length){ fbList.innerHTML=''; return; }
+    fbList.innerHTML = arr.slice().reverse().map(f=>`<div style="padding:8px;border-bottom:1px solid #f0f0f0"><strong>${f.date}</strong><div class="muted">${f.text}</div></div>`).join('');
+  }
+  fbBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    const txt = fbText.value.trim();
+    if(!txt){ fbMsg.textContent='Escribe un comentario antes de enviar.'; return; }
+    const arr = JSON.parse(localStorage.getItem('dpes_feedback') || '[]');
+    arr.push({date:new Date().toLocaleString(), text:txt});
+    localStorage.setItem('dpes_feedback', JSON.stringify(arr));
+    fbMsg.textContent='Gracias por tu comentario.';
+    fbText.value='';
+    renderList();
+  });
+  renderList();
+});
+</script>
+
+</main>
+
+</body>
+</html>
