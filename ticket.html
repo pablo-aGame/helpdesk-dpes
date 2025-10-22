@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Levantar ticket — HelpDesk DPES</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="brand">HelpDesk DPES</div>
+    <div class="subtitle">Portal de atención técnica – Dirección de Prestaciones Económicas y Sociales</div>
+  </header>
+  <main class="container">
+    
+<div class="card">
+  <h2>Levantar ticket</h2>
+  <p class="muted">Describe la falla o requerimiento</p>
+  <div class="form-row">
+    <label>Área</label>
+    <select>
+      <option>Soporte técnico</option>
+      <option>Mantenimiento</option>
+      <option>Sistemas</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label>Prioridad</label>
+    <select>
+      <option>Normal</option>
+      <option>Alta</option>
+      <option>Baja</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label>Descripción</label>
+    <textarea placeholder="Describe el problema..."></textarea>
+  </div>
+  <div class="form-row">
+    <label>Ubicación</label>
+    <input type="text" placeholder="Piso, oficina o módulo">
+  </div>
+  <div style="display:flex;gap:8px;margin-top:8px">
+    <a class="btn" href="listado.html">Enviar (simulado)</a>
+    <a class="btn ghost" href="menu.html">Cancelar</a>
+  </div>
+  <p class="muted" style="margin-top:10px">Al enviar, el ticket aparecerá en el listado (simulado).</p>
+</div>
+
+  </main>
+</body>
+</html>
